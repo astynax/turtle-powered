@@ -45,7 +45,8 @@ showMpcMenu = do
 menu :: Prompt -> [MenuItem] -> IO (Maybe Text)
 menu prompt items =
   ((T.strip <$>) . toMaybe) <$>
-  procStrict "rofi" ["-lines", "5", "-dmenu", "-p", prompt] (select items)
+  procStrict "rofi" ["-lines", "5", "-dmenu", "-p", prompt]
+  (return $ T.intercalate "\n" items)
 
 sendToMpv :: WindowID -> KeyPress -> IO ()
 sendToMpv win key =
