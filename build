@@ -1,0 +1,41 @@
+#!/usr/bin/env stack
+-- stack --install-ghc runghc --package turtle
+{-# LANGUAGE OverloadedStrings #-}
+
+import           Data.Maybe       (fromMaybe)
+import qualified Data.Text        as T
+import           Prelude          hiding (FilePath, null)
+import           System.Directory
+
+import           Turtle
+
+type SourcePath = FilePath
+type TargetPath = FilePath
+
+main :: IO ()
+main = do
+  (mbOut, src) <- options "Script building tool" argParser
+  let out = (fromMaybe (directory src </> "bin") mbOut)
+            </> basename src
+  build out src
+
+argParser :: Parser (Maybe TargetPath, SourcePath)
+argParser = (,)
+            <$> (Just <$> optPath "outdir" 'o' "dir to place a binaries to"
+                 <|> pure Nothing)
+            <*> argPath "source" "source to build"
+
+build :: TargetPath -> SourcePath -> IO ()
+build tgt src =
+  getTemporaryDirectory >>= \tmp ->
+  void $ proc "stack" ["ghc", "--",
+                       "-O2",
+                       "-odir",  T.pack tmp,
+                       "-hidir", T.pack tmp,
+                       "-o", tgt',
+                       src'
+                      ] empty
+              .&&. proc "strip" [tgt'] empty
+  where
+    tgt' = format fp tgt
+    src' = format fp src
