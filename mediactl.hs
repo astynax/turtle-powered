@@ -20,25 +20,20 @@ findMpv =
 
 showMpvMenu :: WindowID -> IO ()
 showMpvMenu win =
-  menu "MPV:" [ "toggle"
-              , "quit"
-              , ".." ]
+  menu "MPV:" [ "toggle", "quit", ".." ]
   >>= andThen
-    (\case
-        "toggle" -> sendToMpv win "space"
-        "quit"   -> sendToMpv win "q"
-        ".."     -> showMpcMenu
-        other    -> die other
-    )
+  (\case
+      "toggle" -> sendToMpv win "space"
+      "quit"   -> sendToMpv win "q"
+      ".."     -> showMpcMenu
+      other    -> die other
+  )
 
 showMpcMenu :: IO ()
 showMpcMenu = do
   (_, status) <- procStrict "mpc" [] empty
-  menu
-    ("music: " <> head (T.lines status))
-    [ "toggle"
-    , "next", "prev"
-    , "play", "stop"]
+  menu ("music: " <> head (T.lines status))
+    [ "toggle", "next", "prev", "play", "stop"]
   >>= andThen
     (\cmd -> void $ shell ("mpc " <> cmd) empty)
 
@@ -50,7 +45,7 @@ menu prompt items =
 
 sendToMpv :: WindowID -> KeyPress -> IO ()
 sendToMpv win key =
-  void $ proc "xdotool" ["key", "--window", win, key] empty
+    void $ proc "xdotool" ["key", "--window", win, key] empty
 
 -- helpers
 
