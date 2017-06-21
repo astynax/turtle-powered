@@ -7,6 +7,7 @@
    --package system-filepath
 -}
 {-# LANGUAGE OverloadedStrings #-}
+
 {-
 This script
 - encodes the .CUE-file to UTF-8
@@ -18,7 +19,6 @@ Requirements:
 - cuebreakpoints ("cuetools" package)
 - shnsplit ("shntool" package)
 -}
-
 import Control.Monad
 import qualified Data.Text as T
 import Filesystem.Path.CurrentOS as FP hiding (empty)
@@ -40,13 +40,12 @@ main = do
     -- read indexes and titles
     echo "Reading the CUE..."
     cueContent <- strict $ input cueFile
-    let pairs = match pairRegEx cueContent
-    foldIO (select pairs) (FoldM (const rename_) (pure ()) return)
+    traverse rename_ $ match pairRegEx cueContent
 
 -- steps
 convert inp outp = do
     printf ("Converting " % qfp % " to UTF-8...\n") inp
-    call_ $ format ("iconv -f cp1251 -t utf-8 " % qfp % " > " % qfp) inp outp
+    input inp & inproc "iconv" ["-f", "cp1251", "-t", "utf-8"] & output outp
 
 splitFlac flacp cuep = do
     printf ("Spliting a " % qfp % "...") flacp
@@ -75,7 +74,7 @@ pairRegEx =
 
 -- helpers
 qfp :: Format r (Turtle.FilePath -> r)
-qfp = makeFormat $ either (error . T.unpack) (\x -> "\"" <> x <> "\"") . toText
+qfp = makeFormat $ format ("\"" % fp % "\"")
 
 ensure p m = testfile p >>= flip unless (m >> require p)
 
@@ -83,5 +82,3 @@ require p =
     ensure p $ do
         printf ("File " % qfp % " not found!\n") p
         exit $ ExitFailure 1
-
-call_ = view . flip inshell empty
