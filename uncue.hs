@@ -45,14 +45,11 @@ main = do
 -- steps
 convert inp outp = do
     printf ("Converting " % qfp % " to UTF-8...\n") inp
-    input inp & inproc "iconv" ["-f", "cp1251", "-t", "utf-8"] & output outp
+    input inp & iconvWinToUtf8 & output outp
 
 splitFlac flacp cuep = do
-    printf ("Spliting a " % qfp % "...") flacp
-    view $ shnsplit $ cuebreakpoints empty
-  where
-    shnsplit = inshell $ format ("shnsplit -o flac " % qfp) flacp
-    cuebreakpoints = inshell (format ("cuebreakpoints " % qfp) cuep)
+    printf ("Splitting a " % qfp % "...") flacp
+    input cuep & cuebreakpoints & shnsplitFlacs flacp & view
 
 rename_ (tn, tt) = do
     let inp = fromText $ format ("split-track" % s % ".flac") tn
@@ -82,3 +79,12 @@ require p =
     ensure p $ do
         printf ("File " % qfp % " not found!\n") p
         exit $ ExitFailure 1
+
+toText' = either (const $ error "Oops!") id . toText
+
+-- external programs
+shnsplitFlacs flacFile = inproc "shnsplit" ["-o", "flac", toText' flacFile]
+
+cuebreakpoints = inproc "cuebreakpoints" []
+
+iconvWinToUtf8 = inproc "iconv" ["-f", "cp1251", "-t", "utf-8"]
