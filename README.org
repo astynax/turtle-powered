@@ -4,5 +4,3 @@
 * Turtle-powered utils
 This repository contains the source of small utilities with various purposes. All programs built using the [[https://hackage.haskell.org/package/turtle][turtle]] and [[https://github.com/commercialhaskell/stack][stack]].
 
-List of utilities:
-- ~mediactl~ ("Media control") - tool for manipulating MPV and MPD in a menu-drived manner. Uses ~xdotool~, ~mpc~ and ~rofi~.
