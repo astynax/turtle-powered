@@ -1,6 +1,3 @@
-#+TITLE: Turtle powered utils
-#+DESCRIPTION: Small programs built with using the Turtle library
-
 * Turtle-powered utils
 This repository contains a bunch of small utilities. All the programs were built using the [[https://hackage.haskell.org/package/turtle][turtle]].
 
@@ -10,9 +7,9 @@ This tool opens a list of files (in cwd) in the *Vim* as a plain text file. Afte
 ** ~uncue~
 This tool
 
-1. encodes the .CUE-file to UTF-8,
-2. splits the .FLAC-file into separate tracks,
-3. reads the encoded .CUE-file and gets the titles,
+1. encodes the ~.CUE~-file into UTF-8,
+2. splits the ~.FLAC~-file to separate tracks,
+3. reads the encoded ~.CUE~-file and gets the titles,
 4. renames the tracks.
 
 System requirements:
@@ -27,11 +24,11 @@ This tool converts some set of .zip-files those looks like
 #+BEGIN_SRC text
 .
 ├── artist1 - album_name.zip
-├── artist1 - other_album.zip
+├── artist1 - another_album.zip
 └── artist2 - album_name.zip
 #+END_SRC
 
-to the set of nested folders and also renames the album covers (only first image become a "cover").
+to the set of nested folders and also renames the album covers (only the first image becomes a "cover").
 
 The resulting file tree usually looks like
 #+BEGIN_SRC text
@@ -41,7 +38,7 @@ The resulting file tree usually looks like
 │   │   ├── ...
 │   │   ├── cover.jpg
 │   │   └── 01 - foo.mp3
-│   └── other album/
+│   └── another album/
 │       └── ...
 └── artist2/
     └── ...
